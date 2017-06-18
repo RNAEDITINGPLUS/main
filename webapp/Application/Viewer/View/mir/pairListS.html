@@ -1,0 +1,50 @@
+<extend name="Base/show"/>
+<block name="header">
+  <h1>Editing on {$miRNA}</h1>
+  <p>Check key: {$sig}</p>
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li onClick="window.print();" style="cursor:pointer;">Save as PDF</li>
+      <li><a class="back-to-top" href="#top">Back to Top</a></li>
+    </ul>
+  </nav>
+</block>
+<block name="content">
+  <table class="table table-condensed table-hover">
+    <thead>
+      <tr>
+        <th>Gene symbol</th>
+        <th>&#916G duplex</th>
+        <th>&#916G binding</th>
+        <th>&#916G duplex(seed)</th>
+        <th>&#916G binding(seed)</th>
+        <th>UTR start</th>
+        <th>UTR end</th>
+      </tr>
+    </thead>
+    <tbody>
+    <volist name="rlist" id="hit">
+      <tr>
+        <th scope="row"><a href="http://www.ncbi.nlm.nih.gov/gene/?term=<?php echo explode('.', $hit['transcript_id'])[0]; ?>" target="_blank">{$hit.gene_symbol}({$hit.transcript_id})</a></th>
+        <td><?php $dd = $hit['dg_duplex'] != ' ' ? $hit['dg_duplex'] : 'Not evaluate'; echo $dd;?></td>
+        <td><?php $dd = $hit['dg_binding'] != ' ' ? $hit['dg_binding'] : 'Not evaluate'; echo $dd;?></td>
+        <td><?php $dd = $hit['dg_duplex_seed'] != ' ' ? $hit['dg_duplex_seed'] : 'Not evaluate'; echo $dd;?></td>
+        <td><?php $dd = $hit['dg_binding_seed'] != ' ' ? $hit['dg_binding_seed'] : 'Not evaluate'; echo $dd;?></td>
+        <td>{$hit.utr_start}</td>
+        <td>{$hit.utr_end}</td>
+      </tr>
+      <tr>
+    	<td colspan="9">
+        <div style="text-align:center;font-family: monospace;"> 
+        	{$hit.utr3}
+		</div>
+        </td>
+  	  </tr>
+    </volist>
+    </tbody>
+  </table>
+  {$page}
+</block>
+</extend>

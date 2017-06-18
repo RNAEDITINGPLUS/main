@@ -1,0 +1,15 @@
+<extend name="Base/single"/>
+<block name="header">
+  <h1>Too much genes</h1>
+  <p>There are more than 3,000 genes need to be clusterd, but DAVID WS will not handle it.</p>
+</block>
+<block name="content">
+<div class="bs-docs-section">
+    <h1 id="overview" class="page-header">Do it by yourself</h1>
+    <p>We generated a list of transcript id, which you can copy and then paste at <a href="https://david.ncifcrf.gov/summary.jsp">DAVID</a>.</p>
+    <ul class="list-unstyled">
+    <volist name="tid" id="hit"><li>{$hit}</li></volist>
+    </ul>
+</div>
+</block>
+</extend>

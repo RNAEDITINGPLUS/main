@@ -1,0 +1,211 @@
+<extend name="Base/single"/>
+<block name="header">
+  <h1>Editing Hunter</h1>
+  <p>Search results for {$query} ({$num} editing sites found).</p>
+</block>
+<block name="content">
+  <div class="bs-docs-section">
+    <h1 id="overview" class="page-header">Map</h1>
+    <p>It may take you some time to load genomic information from Ensembl.</p>
+    <div id="genoverse"></div>
+  </div>
+  <div class="bs-docs-section">
+    <h1 id="search">Editing sites</h1>
+    <!--<div style="text-align:justify;">!-->
+    <script>
+		function showAll(){
+			$("table tbody tr").show("fast");
+			return 0;
+		}
+		function tableFilter(pattern){
+			$("table tbody tr").hide("fast").filter(":contains('"+pattern+"')").show("fast"); 
+			return 0;
+		}
+  	</script>
+    <h3>Filters</h3>
+    <p>
+    Type:
+        <a class="label label-primary" onclick="showAll();">All</a>
+        <a class="label label-primary" onclick="tableFilter('A>I');">A>I</a>
+        <a class="label label-primary" onclick="tableFilter('C>U');">C>U</a>
+    </p>
+    <p>
+    Alu?:
+        <a class="label label-primary" onclick="showAll();">All</a>
+        <a class="label label-primary" onclick="tableFilter('yes');">Alu</a>
+        <a class="label label-primary" onclick="tableFilter('no');">Non-Alu</a>
+    </p>
+    <p>
+    Annotation:
+        <a class="label label-primary" onclick="showAll();">All</a>
+        <a class="label label-primary" onclick="tableFilter('intronic');">Intronic</a>
+        <a class="label label-primary" onclick="tableFilter('Syn');">Synonymous mutation</a>
+        <a class="label label-primary" onclick="tableFilter('Nonsyn');">Non-synonymous mutation</a>
+        <a class="label label-primary" onclick="tableFilter('5UTR');">5' UTR</a>
+        <a class="label label-primary" onclick="tableFilter('3UTR');">3' UTR</a>
+        <a class="label label-primary" onclick="tableFilter('ncRNA');">ncRNA</a>
+        <a class="label label-primary" onclick="tableFilter('intergenic');">Intergenic</a>        
+    </p>
+    <h3>Result</h3>
+    <ul class="list-inline">
+    	<li onClick="window.print();" style="cursor:pointer;"><i class="glyphicon glyphicon-book"></i>Save results as pdf</li>
+    	<li> | </li>
+    	<li><a href="__APP__/Archive"><i class="glyphicon glyphicon-list"></i>Download results(SQL)</a></li>
+    </ul>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Chromosome</th>
+          <th>Position</th>
+          <th>Type</th>
+          <th>Gene</th>
+          <th>Region</th>
+          <th>Strand</th>
+          <th>Level</th>
+          <th>Alu?</th>
+          <th>Source</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <volist name="rlist" id="hit">
+          <tr>
+            <td>{$hit.chromosome}</td>
+            <td>{$hit.position}</td>
+            <td>{$hit.type}</td>
+            <td>{$hit.gene}</td>
+            <td>{$hit.annot}</td>
+            <td>{$hit.strand}</td>
+            <td>{$hit.level}</td>
+            <td>{$hit.alu_tag}</td>
+            <td>{$hit.tissue}</td>
+            <td><a href=""><i class="glyphicon glyphicon-share-alt"></i>{$hit.rec_id}</a></td>
+          </tr>
+        </volist>
+      </tbody>
+    </table>
+    <!--    </div>--> 
+  </div>
+  <div class="modal fade" id="target-show" tabindex="-1" role="dialog" aria-labelledby="target-show">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">miRNA Target Show</h4>
+        </div>
+        <div class="modal-body" id="pairShow"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="target-search" tabindex="-1" role="dialog" aria-labelledby="target-search">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">miRNA Target Show</h4>
+        </div>
+        <div class="modal-body" id="pairResult"></div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+	  $("#mir-seq").html($("#mir-seq").text().replace("I", "<span style='color:red;font-weight:bold;'>I</span>"));
+		var myChart = echarts.init(document.getElementById('tchange')); 	
+		var option = {
+    					tooltip : {
+        					trigger: 'item',
+					        formatter: "{b}: {c}"
+					    },
+					    toolbox: {
+					        show : true,
+					        feature : {
+							            mark : {show: false},
+							            dataView : {show: false, readOnly: false},
+							            restore : {show: false},
+							            saveAsImage : {show: true}
+        								}
+    					},
+					    calculable : false,
+					    series : [
+        							{
+							            name:'Venn',
+							            type:'venn',
+							            itemStyle: {
+							                normal: {
+									                    label: {
+											                        show: true,
+											                        textStyle: {
+														                            fontFamily: 'Arial, Verdana, sans-serif',
+														                            fontSize: 16,
+														                            fontStyle: 'italic',
+														                            fontWeight: 'bolder'
+														                        }
+											                    },
+									                    labelLine: {
+											                        show: false,
+											                        length: 10,
+											                        lineStyle: {
+														                            width: 1,
+														                            type: 'solid'
+														                        }
+                    												}
+												                },
+                										emphasis: {
+												                    color: '#cc99cc',
+												                    borderWidth: 3,
+												                    borderColor: '#996699'
+												                }
+    					        },
+            					data:[
+						                {value:{$hit.new_t}, name:'Edited'},
+						                {value:{$hit.old_t}, name:'WT'},
+						                {value:{$hit.com_t}, name:'Common'}
+            						]
+        						}
+    						]
+					};
+					myChart.setOption(option); 
+$('#target-show').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget) // Button that triggered the modal
+	var rec = button.data('rec') // Extract info from data-* attributes
+    var modal = $(this)
+	$.get("__CONTROLLER__/pair/rec/"+rec, function(result){
+		modal.find('.modal-body').html(result)
+	});
+});
+$('#target-search').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget) // Button that triggered the modal
+	var rec = button.data('rec') // Extract info from data-* attributes
+    var modal = $(this)
+	$.get("__CONTROLLER__/search/symbol/"+$("#gs").val()+"/type/"+$("#event").val()+"/sig/{$hit.sig}", function(result){
+		modal.find('.modal-body').html(result)
+	});
+});   
+</script> 
+<script type="text/javascript" src="__PUBLIC__/genoverse/js/genoverse.combined.nojquery.js">
+{
+	container : '#genoverse',
+	genome    : 'grch38', // see js/genomes/
+	chr       : {$gi.chromosome},
+	start     : {$gi.start},
+	end       : {$gi.end},
+	plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer', 'focusRegion', 'fullscreen', 'tooltips' ],
+	tracks    : [
+	  Genoverse.Track.Scalebar,
+	  Genoverse.Track.extend({
+	    name       : 'Sequence',
+	    controller : Genoverse.Track.Controller.Sequence,
+	    model      : Genoverse.Track.Model.Sequence.Ensembl,
+	    view       : Genoverse.Track.View.Sequence,
+	    100000     : false,
+	    resizable  : 'auto'
+	  }),
+	  Genoverse.Track.Gene,
+	  Genoverse.Track.rep
+	]
+}
+</script> 
+<!--<script src="__PUBLIC__/js/bootstrap-table.min.js"></script>-->
+<!--<script src="__PUBLIC__/js/bootstrap-table-en-US.min.js"></script>-->
+</block>
+</extend>

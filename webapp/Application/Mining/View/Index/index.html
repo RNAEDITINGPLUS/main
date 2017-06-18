@@ -1,0 +1,140 @@
+<extend name="Base/single"/>
+<block name="header">
+  <h1>RNA Editing Plus</h1>
+  <p style="margin-right:0;">Prediction of A-to-I RNA editing effects on mRNAs expression and splicing.</p>
+</block>
+<block name="content">
+  <div class="bs-docs-section">
+    <form id="form1" name="form1" method="post" action="__MODULE__/Hpc/transfer" enctype="multipart/form-data">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title"> <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Predict effects by providing a list of editing sites.</a> </h4>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+              <div class="form-group">
+                <label for="exampleInputFile">File input(list of editing sites) <a class="label label-default" href="http://www.rnaeditplus.org/Public/demo/demo.txt">Demo file</a></label>
+                <input type="file" id="exampleInputFile" name="es" accept="text/*">
+                <div class="bs-callout bs-callout-warning" id="callout-inline-form-labels">
+                  <h4>Required columns of the file containing the list of editing sites (LESS THAN 10 Mb):</h4>
+                  <p>
+                  <ol>
+                    <li>Column 1 (Region): The name of the chromosome or scaffold</li>
+                    <li>Column 2 (Position): The starting position of the SNV in the chromosome or scaffold <b>(1-based)</b></li>
+                    <li>Column 3 (Strand): Strand (+/1 or -/0)</li>
+                  </ol>
+                  </p>
+                </div>
+                <div class="bs-callout bs-callout-info" id="callout-inline-form-labels">
+                  <h4>[Optional] Providing gene expression data for more accurate prediction:</h4>
+                  <p>To get a more accurate prediction for UTR editing's effects, you can provide us a gene expression data via Cufflinks. And this file should not be bigger than 10 MB.</p>
+                  <label for="exampleInputFile">Gene expression data:</label>
+                  <input type="file" id="exampleInputFile" name="expr" accept="text/*">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Predict effects by providing NGS data.</a> </h4>
+          </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+              <div class="form-group">
+                <label for="sample">Sample Type</label>
+                <select name="seq" class="form-control">
+                  <option value="2">Paired-end RNA-seq Data</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="du">URL of pair-end RNA-seq file <span class="label label-default" style="cursor: pointer;" onclick="$('#du').val('http://www.rnaeditplus.org/Public/demo/test_1.fastq.gz');$('#ru').val('http://www.rnaeditplus.org/Public/demo/test_2.fastq.gz');">Demo file</span></label>
+                <input type="text" class="form-control" id="du" name="du" placeholder="Tell REP to download RNA-seq data from web by entering URL in this box">
+              </div>
+              <div class="form-group">
+                <label for="ru">URL of pair-end RNA-seq file <span class="label label-default" style="cursor: pointer;" onclick="$('#du').val('http://www.rnaeditplus.org/Public/demo/test_1.fastq.gz');$('#ru').val('http://www.rnaeditplus.org/Public/demo/test_2.fastq.gz');">Demo file</span></label>
+                <input type="text" class="form-control" id="ru" name="ru" placeholder="Tell REP to download RNA-seq data from web by entering URL in this box">
+              </div>
+              <div class="bs-callout bs-callout-warning" id="callout-inline-form-labels">
+                  <h4>Requirements for RNA-Seq Data:</h4>
+                  <p>
+                  <ol>
+                    <li>The url must be a direct download link (no redirection, no authorization...);</li>
+                    <li>Seq files should be compressed by gzip;</li>
+                    <li>Each seq file should be less than 5 Gb.</li>
+                  </ol>
+                  </p>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description for your job</label>
+        <textarea class="form-control" rows="3" name="description"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tissue</label>
+        <select class="form-control" name="tissue">
+        <volist name="tisl" id="hit">
+        	<option value="{$hit.id}">{$hit.tissue}</option>
+        </volist>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="inputPassword">E-mail address:</label>
+        (Since the whole job might take some time, we will send you the jobs' result to this address when it finished)
+        <div class="controls">
+          <input type="email" id="inputMail" class="form-control" placeholder="Your e-mail address here"  errormsg="The format of your address is not correct." nullmsg="Please tell us your mail address." datatype="*5-5" name="user" required="required">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="inputPassword">I'm not a robot</label>
+        <div class="controls">
+          <input type="text" id="inputPassword" class="form-control" placeholder="Enter words below"  errormsg="Enter words below." nullmsg="Please enter security code." datatype="*5-5" name="verify" required="required">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="controls"> <img class="verifyimg reloadverify" alt="Click to switch" src="{:U('verify')}" style="cursor:pointer;"> </div>
+        <div class="controls Validform_checktip text-warning"></div>
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+  <script>
+ 	$(function(){
+		var verifyimg = $(".verifyimg").attr("src");
+    	$(".reloadverify").click(function(){
+        	if( verifyimg.indexOf('?')>0){
+            	$(".verifyimg").attr("src", verifyimg+'&random='+Math.random());
+            }else{
+                $(".verifyimg").attr("src", verifyimg.replace(/\?.*$/,'')+'?'+Math.random());
+            }
+        });
+	});
+  </script>
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li> <a href="#overview">Overview</a>
+        <ul class="nav">
+          <li><a href="#ov-mir">miRNA Information</a></li>
+          <li><a href="#ov-edit">Editing Information</a></li>
+        </ul>
+      </li>
+      <li> <a href="#search">Search</a></li>
+      <li> <a href="#targets">Targets</a>
+        <ul class="nav">
+          <li><a href="#targets-venn">Venn</a></li>
+          <li><a href="#targets-com">Old targets</a></li>
+          <li><a href="#targets-new">New targets</a></li>
+          <li><a href="#targets-del">Inactive targets</a></li>
+        </ul>
+      </li>
+      <li> <a href="#top" class="back-to-top">Back to top</a></li>
+    </ul>
+  </nav>
+</block>
+</extend>

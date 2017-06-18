@@ -1,0 +1,24 @@
+<p>{$hit.mirna} - <a href="https://www.ncbi.nlm.nih.gov/gene/?term=<?php echo explode('.', $hit['transcript_id'])[0]; ?>".{$hit.gene_symbol}>{$hit.gene_symbol}({$hit.transcript_id})</a></p>
+<div style="text-align:center;font-family: monospace;">{$hit.utr3}</div>
+<table width="100%" border="0">
+  <tr>
+    <th scope="row">UTR Start</th>
+    <td>{$hit.utr_start}</td>
+    <th scope="row">UTR End</th>
+    <td>{$hit.utr_end}</td>
+  </tr>
+  <tr>
+    <th scope="row">&#916G duplex</th>
+    <td><?php $dd = $hit['dg_duplex'] != ' ' ? $hit['dg_duplex'] : 'Not evaluate'; echo $dd;?></td>
+    <th scope="row">&#916G binding</th>
+    <td><?php $dd = $hit['dg_binding'] != ' ' ? $hit['dg_binding'] : 'Not evaluate'; echo $dd;?></td>
+  </tr>
+  <tr>
+    <th scope="row">&#916G duplex(seed)</th>
+    <td><?php $dd = $hit['dg_duplex_seed'] != ' ' ? $hit['dg_duplex_seed'] : 'Not evaluate'; echo $dd;?></td>
+    <th scope="row">&#916G binding(seed)</th>
+    <td><?php $dd = $hit['dg_binding_seed'] != ' ' ? $hit['dg_binding_seed'] : 'Not evaluate'; echo $dd;?></td>
+  </tr>
+</table>
+<p class="bg-warning" style="text-align:center;font-size:16px;">View: {$hit.way}</p>
+<?php if (strpos($hit['way'], '-so') != FALSE){echo '<p class="bg-info" style="text-align:center;font-size:16px;">Only SVM high confidence.</p>';}else if($hit['dg_duplex'] == ' '){echo '<p class="bg-info" style="text-align:center;font-size:16px;">Only Targetscan high confidence.</p>';}else{echo '<p class="bg-info" style="text-align:center;font-size:16px;">Targetscan high confidence, SVM high confidence.</p>';}?>

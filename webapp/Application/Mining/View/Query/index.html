@@ -1,0 +1,70 @@
+<extend name="Base/single"/>
+<block name="header">
+  <h1>RNA Editing Plus</h1>
+  <p style="margin-right:0;">Query the status of your job.</p>
+</block>
+<block name="content">
+  <div class="bs-docs-section">
+    <form id="form1" name="form1" method="post" action="__CONTROLLER__/whats">
+    	<div class="form-group">
+        	<label class="control-label" for="inputPassword">E-mail address:</label>
+        	<div class="controls">
+          		<input type="email" id="inputMail" class="form-control" placeholder="Your e-mail address here"  errormsg="The format of your address is not correct." nullmsg="Please tell us your mail address." datatype="*5-5" name="mail" required>
+        	</div>
+      </div>
+      <div class="form-group">
+        	<label class="control-label" for="inputPassword">Job code:</label>
+        	<div class="controls">
+          		<input type="text" id="inputMail" class="form-control" placeholder="Your job code here(like {217B66B5-9A9B-3619-E9DC-02984B6C265C})"  errormsg="You must provide your job code." nullmsg="You must provide your job code." datatype="*5-5" name="job" required>
+        	</div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="inputPassword">I'm not a robot</label>
+        <div class="controls">
+          <input type="text" id="inputPassword" class="form-control" placeholder="Enter words below"  errormsg="Enter words below." nullmsg="Please enter security code." datatype="*5-5" name="verify" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label"></label>
+        <div class="controls"> <img class="verifyimg reloadverify" alt="Click to switch" src="{:U('verify')}" style="cursor:pointer;"> </div>
+        <div class="controls Validform_checktip text-warning"></div>
+      </div>
+      <button type="submit" class="btn btn-default">Query</button>
+    </form>
+  </div>
+  <script>
+ 	$(function(){
+		var verifyimg = $(".verifyimg").attr("src");
+    	$(".reloadverify").click(function(){
+        	if( verifyimg.indexOf('?')>0){
+            	$(".verifyimg").attr("src", verifyimg+'&random='+Math.random());
+            }else{
+                $(".verifyimg").attr("src", verifyimg.replace(/\?.*$/,'')+'?'+Math.random());
+            }
+        });
+	});
+  </script> 
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li> <a href="#overview">Overview</a>
+        <ul class="nav">
+          <li><a href="#ov-mir">miRNA Information</a></li>
+          <li><a href="#ov-edit">Editing Information</a></li>
+        </ul>
+      </li>
+      <li> <a href="#search">Search</a></li>
+      <li> <a href="#targets">Targets</a>
+        <ul class="nav">
+          <li><a href="#targets-venn">Venn</a></li>
+          <li><a href="#targets-com">Old targets</a></li>
+          <li><a href="#targets-new">New targets</a></li>
+          <li><a href="#targets-del">Inactive targets</a></li>
+        </ul>
+      </li>
+      <li> <a href="#top" class="back-to-top">Back to top</a></li>
+    </ul>
+  </nav>
+</block>
+</extend>

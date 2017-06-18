@@ -1,0 +1,17 @@
+<extend name="Base/show"/>
+<block name="header">
+  <h1>Editing on {$miRNA}</h1>
+  <p>Check key: {$sig}</p>
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li onClick="window.print();" style="cursor:pointer;">Save as PDF</li>
+      <li><a class="back-to-top" href="#top">Back to Top</a></li>
+    </ul>
+  </nav>
+</block>
+<block name="content">
+<volist name="rlist" id="hit"><a class="label label-primary" style="display: inline-block;margin-right:5px;cursor:pointer;" href="http://www.ncbi.nlm.nih.gov/gene/?term=<?php echo explode('.', $hit['transcript_id'])[0]; ?>" target="_blank">{$hit.gene_symbol}({$hit.transcript_id})</a></volist>
+</block>
+</extend>

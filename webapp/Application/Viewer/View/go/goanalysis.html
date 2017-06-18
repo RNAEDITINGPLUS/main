@@ -1,0 +1,53 @@
+<extend name="Base/single"/>
+<block name="header">
+  <h1>Chart Report</h1>
+</block>
+<block name="content">
+<div class="bs-docs-section">
+    <table class="table table-bordered table-hover table-condensed">
+    <tr>
+	    <td>Category</td>
+	    <td>Term</td>
+	    <td>Count</td>
+	    <td>%</td>
+	    <td>Pvalue</td>
+	    <td>Genes</td>
+	    <td>FDR</td>
+    </tr>
+    <volist name="rl" id="record">
+    <tr>
+    	<td>{$record->categoryName}</td>
+		<td>{$record->termName}</td>
+		<td>{$record->listHits}</td>
+		<td>{$record->percent}</td>
+		<td>{$record->ease}</td>
+		<td data-g="{$record->geneIds}" onclick="showGene(this);" style="cursor:pointer;">Click to show</td>
+		<td>{$record->afdr}</td>
+    </tr>
+    </volist>
+    </table>
+</div>
+<div class="modal fade" id="sr">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Transcript list</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+function showGene(obj){
+	var self = $(obj);
+	$("#sr .modal-body").html(self.attr("data-g"));
+	$('#sr').modal();
+}
+</script>
+</block>
+</extend>

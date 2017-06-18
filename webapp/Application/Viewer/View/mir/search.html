@@ -1,0 +1,32 @@
+<volist name="hitList" id="hit">
+    <p>{$hit.mirna} - {$hit.gene_symbol}({$hit.fastatag})</p>
+<div style="text-align:center;font-family: monospace;">{$hit.utr3}</div>
+    <table width="100%" border="0">
+      <tr>
+        <th scope="row">Score</th>
+        <td>{$hit.score}</td>
+        <th scope="row">miRNA Start</th>
+        <td>{$hit.mi_start}</td>
+      </tr>
+      <tr>
+        <th scope="row">Energy</th>
+        <td>{$hit.energy} kCal/mol</td>
+        <th scope="row">miRNA End</th>
+        <td>{$hit.mi_end}</td>
+      </tr>
+      <tr>
+        <th scope="row">Identity</th>
+        <td>{$hit.identity}%</td>
+        <th scope="row">UTR Start</th>
+        <td>{$hit.utr_start}</td>
+      </tr>
+      <tr>
+        <th scope="row">Similarity</th>
+        <td>{$hit.similarity}%</td>
+        <th scope="row">UTR End</th>
+        <td>{$hit.utr_end}</td>
+      </tr>
+    </table>
+    <p class="bg-warning" style="text-align:center;font-size:16px;">View: {$hit.tag}</p>
+    <hr />
+</volist>

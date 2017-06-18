@@ -1,0 +1,84 @@
+<extend name="Base/show"/>
+<block name="header">
+  <h1>Editing Analysis</h1>
+  <p>Identify and analyses editing sites in your sample.</p>
+</block>
+<block name="content">
+  <div class="bs-docs-section">
+  	<h1 id="overview" class="page-header">From begin</h1>
+    <p>RNA Editing Plus can identify and analyses RNA editing sites from very begin (By providing mapped bam file).</p>
+    <form id="form1" name="form1" method="post" action="__CONTROLLER__/transfer">
+      <div class="form-group">
+        <label for="sample">Sample Type</label>
+        <select name="seq" class="form-control">
+          <option value="1">DNA-seq + RNA-seq</option>
+          <option value="2">RNA-seq alone</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="du">URL of DNA-seq file</label>
+        <input type="text" class="form-control" id="du" name="du" placeholder="Tell REP to download DNA-seq data from web by entering URL in this box">
+      </div>
+      <div class="form-group">
+        <label for="ru">URL of RNA-seq file</label>
+        <input type="text" class="form-control" id="ru" name="ru" placeholder="Tell REP to download RNA-seq data from web by entering URL in this box">
+      </div>
+      <div class="form-group">
+      	<label>Description for your job</label>
+        <textarea class="form-control" rows="3" name="description"></textarea>
+      </div>
+      <div class="control-group">
+            <label class="control-label" for="inputPassword">I'm not a robot</label>
+            <div class="controls">
+              <input type="text" id="inputPassword" class="form-control" placeholder="Enter words below"  errormsg="Enter words below." nullmsg="Please enter security code." datatype="*5-5" name="verify">
+            </div>
+          </div>
+      <div class="control-group">
+            <label class="control-label"></label>
+            <div class="controls">
+                <img class="verifyimg reloadverify" alt="点击切换" src="{:U('verify')}" style="cursor:pointer;">
+            </div>
+            <div class="controls Validform_checktip text-warning"></div>
+          </div>
+      <div class="bs-callout bs-callout-info">
+        RNA Editing Plus uses <b>hg38</b> as reference genome by default, but you can choose to <code><label><input name="fb" value="1" type="checkbox"><b>set hg19 as reference genome</b></label></code>.
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+  <script>
+ 	$(function(){
+		var verifyimg = $(".verifyimg").attr("src");
+    	$(".reloadverify").click(function(){
+        	if( verifyimg.indexOf('?')>0){
+            	$(".verifyimg").attr("src", verifyimg+'&random='+Math.random());
+            }else{
+                $(".verifyimg").attr("src", verifyimg.replace(/\?.*$/,'')+'?'+Math.random());
+            }
+        });
+	});
+  </script>
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li> <a href="#overview">Overview</a>
+        <ul class="nav">
+          <li><a href="#ov-mir">miRNA Information</a></li>
+          <li><a href="#ov-edit">Editing Information</a></li>
+        </ul>
+      </li>
+      <li> <a href="#search">Search</a></li>
+      <li> <a href="#targets">Targets</a>
+        <ul class="nav">
+          <li><a href="#targets-venn">Venn</a></li>
+          <li><a href="#targets-com">Old targets</a></li>
+          <li><a href="#targets-new">New targets</a></li>
+          <li><a href="#targets-del">Inactive targets</a></li>
+        </ul>
+      </li>
+      <li> <a href="#top" class="back-to-top">Back to top</a></li>
+    </ul>
+  </nav>
+</block>
+</extend>

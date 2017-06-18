@@ -1,0 +1,258 @@
+<extend name="Base/show"/>
+<block name="header">
+  <h1>Analysis</h1>
+  <p>Job: {$hit.vcode}</p>
+</block>
+<block name="content">
+  <div class="bs-docs-section">
+    <h1 id="overview" class="page-header">Overview</h1>
+    <h2 id="ov-ji">Job information</h2>
+    <p>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Description: </strong>{$hit.description}</li>
+      <li class="list-group-item"><strong>Create time: </strong><span id="mir-seq">{$hit.ctime}</span></li>
+      <li class="list-group-item"><strong>Validated editing sites: </strong><span id="cd-all">{$cd.sites}</span>
+        <form style="display:inline;" class="navbar-form" method="post" action="__CONTROLLER__/saveRecords">
+          <input type="hidden" name="job" value="{$hit.vcode}" />
+          <button type="submit" class="btn btn-default" aria-label="Left Align" style="padding:0;"><span class="glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span>Download candidates</button>
+        </form>
+      </li>
+      <li class="list-group-item"><strong>Sites distribute on: </strong><span id="cd-gene">{$cd.genes} genes</span></li>
+      <li class="list-group-item"><strong>ADAR1 expression: </strong><span id="cd-gene">{$hit.adar1}</span>
+      <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <td>ADAR1 (FPKM)</td>
+          <td>Editing sites</td>
+          <td>Source</td>
+          <td>Type</td>
+        </tr>  
+      </thead>
+      <tbody>
+      <foreach name="adar_sites" item="as" >
+        <tr>
+          <td>{$as.adar1}</td>
+          <td>{$as.editingsites}</td>
+          <td>{$as.source}</td>
+          <td>Normal tissue</td>
+        </tr>
+      </foreach>
+      </tbody>
+      </table>
+      </li>
+      <li class="list-group-item"><strong>ADAR2 expression: </strong><span id="cd-gene">{$hit.adar2}</span>
+      <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <td>ADAR2 (FPKM)</td>
+          <td>Editing sites</td>
+          <td>Source</td>
+          <td>Type</td>
+        </tr>  
+      </thead>
+      <tbody>
+      <foreach name="adar_sites" item="as" >
+        <tr>
+          <td>{$as.adar2}</td>
+          <td>{$as.editingsites}</td>
+          <td>{$as.source}</td>
+          <td>Normal tissue</td>
+        </tr>
+      </foreach>
+      </tbody>
+      </table>
+      </li>
+    </ul>
+    </p>
+    <h2 id="ov-ee">Editing effects</h2>
+    <p>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Caused by 3' UTR editing: </strong>{$hit.utr}</li>
+      <li class="list-group-item"><strong>Caused by miRNA editing: </strong><span id="mir-seq">{$hit.mir}</span></li>
+      <li class="list-group-item"><strong>Caused by Splicing sites or branch sites editing: </strong><span id="mir-seq">{$hit.splicing}</span></li>
+      <li class="list-group-item"><strong>Caused by coding exon editing: </strong><span id="mir-seq">{$hit.mis}</span></li>
+    </ul>
+    </p>
+  </div>
+  <div class="bs-docs-section">
+    <h1 id="gr" class="page-header">Gene Regulation</h1>
+    <div class="bs-callout bs-callout-danger" id="callout-type-b-i-elems">
+      <h4>These genes will
+        <mark>be down regulated</mark>
+        by miRNA:(<a href="__MODULE__/GO/dispatcher/g/1"><i class="glyphicon glyphicon-new-window"></i>Enrichment analysis</a>)</h4>
+      <p style="max-height: 300px; overflow: scroll;">{$mio.reg}</p>
+    </div>
+    <div class="bs-callout bs-callout-info" id="callout-type-b-i-elems">
+      <h4>These genes will
+      <mark>not be regulated</mark>
+      by miRNA:(<a href="__MODULE__/GO/dispatcher/g/2"><i class="glyphicon glyphicon-new-window"></i>Enrichment analysis</a>)</h4>
+      <p style="max-height: 300px; overflow: scroll;">{$mio.rel}</p>
+    </div>
+  </div>
+  <div class="bs-docs-section">
+    <h1 id="search" class="page-header">Discover</h1>
+    <p>
+    <div class="well well-lg" style="text-align:justify;">
+      <form class="form-inline" id="diy">
+        <div class="form-group">
+          <label for="event">Event</label>
+          <select class="form-control" id="diy-event" name="event">
+            <option value="1">3' UTR editing</option>
+            <option value="2">miRNA editing</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gs">Gene symbol</label>
+          <input type="text" class="form-control" id="diy-gs" name="gs">
+        </div>
+        <input type="hidden" id="sig" name="sig" value="{$hit.sig}">
+        <button type="submit" class="btn btn-default">Search</button>
+      </form>
+    </div>
+    <div> 
+      
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#3u" aria-controls="home" role="tab" data-toggle="tab">3' UTR Editing</a></li>
+        <li role="presentation"><a href="#mi" aria-controls="profile" role="tab" data-toggle="tab">miRNA editing</a></li>
+        <li role="presentation"><a href="#sp" aria-controls="messages" role="tab" data-toggle="tab">Splicing editing</a></li>
+        <li role="presentation"><a href="#mis" aria-controls="messages" role="tab" data-toggle="tab">Coding exon editing</a></li>
+      </ul>
+      
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="3u">
+          <p>
+          <ul class="list-inline">
+            <foreach name="u3" item="vo" >
+              <li><a class="label label-default" href="__MODULE__/Utr3/priOverview/rec/{$vo}">{$vo}</a></li>
+            </foreach>
+          </ul>
+          </p>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="mi">
+          <p>
+          <ul class="list-inline">
+            <foreach name="mi" item="vo" >
+              <li><a class="label label-default" href="__MODULE__/Mir/priOverview/rec/{$vo}">{$vo}</a></li>
+            </foreach>
+          </ul>
+          </p>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="sp">
+          <p>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Gene(Transcript)</th>
+                <th>Position</th>
+                <th>Type</th>
+                <th>Raw score</th>
+                <th>Edited Score</th>
+                <th>Variation(%)</th>
+                <th>#Intron</th>
+              </tr>
+            </thead>
+            <tbody>
+              <volist name="sp" id="hit">
+                <tr>
+                  <td><a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?t={$hit.transcript}&db=core">{$hit.gene}({$hit.transcript})</a></td>
+                  <td>{$hit.pos}</td>
+                  <td>{$hit.type|translator4Splicing}</td>
+                  <td>{$hit.raw_score}</td>
+                  <td>{$hit.new_score}</td>
+                  <td>{$hit.variation}</td>
+                  <td>{$hit.order}</td>
+                </tr>
+              </volist>
+            </tbody>
+          </table>
+          </p>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="mis">
+          <p>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Gene(Transcript)</th>
+                <th>Chromosome</th>
+                <th>Position</th>
+                <th>Relative position</th>
+                <th>Wild type</th>
+                <th>Mutant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <volist name="mis" id="hit">
+                <tr>
+                  <td><a href="https://www.ncbi.nlm.nih.gov/gene/?term=<?php echo explode('.', $hit['transcript'])[0] ?>">{$hit.gene}({$hit.transcript})</a></td>
+                  <td>{$hit.chromosome}</td>
+                  <td>{$hit.position}</td>
+                  <td>{$hit.relpos}</td>
+                  <td>{$hit.fr}</td>
+                  <td>{$hit.to}</td>
+                </tr>
+              </volist>
+            </tbody>
+          </table>
+          </p>
+        </div>
+      </div>
+    </div>
+    </p>
+  </div>
+  <div class="modal fade" id="target-show" tabindex="-1" role="dialog" aria-labelledby="target-show">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">miRNA Target Show</h4>
+        </div>
+        <div class="modal-body" id="pairShow"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="target-search" tabindex="-1" role="dialog" aria-labelledby="target-search">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">miRNA Target Show</h4>
+        </div>
+        <div class="modal-body" id="pairResult"></div>
+      </div>
+    </div>
+  </div>
+  <!--  <script src="__PUBLIC__/js/echarts/echarts.js"></script> --> 
+  <script type="text/javascript">
+$("#diy").submit(function(e){
+	var self = $(this);
+	if ($("#diy-event").val() == 1){
+		controller = '__MODULE__/Utr3/priOverview/rec/';
+	}else if ($("#diy-event").val() == 2){
+		controller = '__MODULE__/Mir/priOverview/rec/';
+	}else{
+		return false;
+	}
+	controller += $("#diy-gs").val();
+	window.location.href=controller;
+  return false;
+});
+</script> 
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li> <a href="#overview">Overview</a>
+        <ul class="nav">
+          <li><a href="#ov-ji">Job Information</a></li>
+          <li><a href="#ov-ee">Editing Effects</a></li>
+        </ul>
+      </li>
+      <li> <a href="#gr">Gene Regulation</a></li>
+      <li> <a href="#search">Discover</a></li>
+      <li> <a href="#top" class="back-to-top">Back to top</a></li>
+    </ul>
+  </nav>
+</block>
+</extend>

@@ -1,0 +1,194 @@
+<extend name="Base/show"/>
+<block name="header">
+  <h1>RNA Editing on 3' UTR</h1>
+  <p>{$hit.mirna}</p>
+</block>
+<block name="content">
+  <div class="bs-docs-section">
+    <h1 id="overview" class="page-header">Overview</h1>
+    <h2 id="ov-mir">3' UTR Information</h2>
+    <p>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>3' UTR: </strong><a href="http://www.mirbase.org/cgi-bin/mature.pl?mature_acc={$hit.accession}"><span class="glyphicon glyphicon-new-window"></span>{$hit.mirna}</a></li>
+      <li class="list-group-item"><strong>Sequence(edited): </strong><span id="mir-seq">{$hit.sequence}</span></li>
+    </ul>
+    </p>
+    <h2 id="ov-edit">Edit Information</h2>
+    <p>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Chromosome: </strong>{$hit.edit_pos_chr}</li>
+      <li class="list-group-item"><strong>Position(hg38): </strong>{$hit.edit_pos_raw}</li>
+      <li class="list-group-item"><strong>Strand: </strong>{$hit.strand}</li>
+      <li class="list-group-item"><strong>Event: </strong>{$hit.event}</li>
+      <li class="list-group-item"><strong>Seed?: </strong>{$hit.role}</li>
+      <li class="list-group-item"><strong>Alu?: </strong>
+        <?php if($hit["alu"]){echo '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';}else{echo'<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>';}?>
+      </li>
+      <li class="list-group-item"><strong>miScore: </strong>{$hit.miscore}</li>
+    </ul>
+    </p>
+  </div>
+  <div class="bs-docs-section">
+  <h1 id="search">Search</h1>
+    <p class="lead">Search for genes you interested in.</p>
+    <div class="well well-lg" style="text-align:justify;">
+      <form class="form-inline">
+        <div class="form-group">
+          <label for="event">Event</label>
+          <select class="form-control" id="event" name="event">
+            <option value="RAW">Old targets</option>
+            <option value="MUT">New targets</option>
+            <option value="INC">Inactive targets</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gs">Gene symbol</label>
+          <input type="text" class="form-control" id="gs" name="gs">
+        </div>
+        <input type="hidden" id="sig" name="sig" value="{$hit.sig}">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#target-search">Search</button>
+      </form>
+    </div>
+  </div>
+  <div class="bs-docs-section">
+    <h1 id="targets" class="page-header">miRNA Targets</h1>
+    <p class="lead">Here are the predicted targets for edited miRNAs.</p>
+    <h2 id="targets-venn">Venn</h2>
+    <div id="tchange" style="height:400px"></div>
+    <h2 id="targets-com">Old targets</h2>
+    <div class="well well-lg" style="text-align:justify;">
+      <p>Top 100 targets(<a href="__CONTROLLER__/geneList/sig/{$hit.sig}/type/raw" target="_blank"><span class="glyphicon glyphicon-new-window"></span>Full report</a>):</p>
+      <volist name="oldList" id="oldl"> <span class="label label-primary" style="display: inline-block;margin-right:5px;cursor:pointer;" data-toggle="modal" data-target="#target-show" data-rec="{$oldl.rec_id}">{$oldl.gene_symbol}</span> </volist>
+    </div>
+    <h2 id="targets-new">New targets</h2>
+    <div class="well well-lg" style="text-align:justify;">
+      <p>Top 100 targets(<a href="__CONTROLLER__/geneList/sig/{$hit.sig}/type/mut" target="_blank"><span class="glyphicon glyphicon-new-window"></span>Full report</a>):</p>
+      <volist name="newList" id="newl"> <span class="label label-primary" style="display: inline-block;margin-right:5px;cursor:pointer;" data-toggle="modal" data-target="#target-show" data-rec="{$newl.rec_id}">{$newl.gene_symbol}</span> </volist>
+    </div>
+    <h2 id="targets-del">Weaken targets</h2>
+    <div class="well well-lg">
+      <p>Top 100 targets(<a href="__CONTROLLER__/geneList/sig/{$hit.sig}/type/inc" target="_blank"><span class="glyphicon glyphicon-new-window"></span>Full report</a>):</p>
+      <volist name="incList" id="incl"> <span class="label label-default" style="display: inline-block;margin-right:5px;cursor:pointer;">{$incl.gene_symbol}</span> </volist>
+    </div>
+  </div>
+  <div class="modal fade" id="target-show" tabindex="-1" role="dialog" aria-labelledby="target-show">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">miRNA Target Show</h4>
+        </div>
+        <div class="modal-body" id="pairShow"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="target-search" tabindex="-1" role="dialog" aria-labelledby="target-search">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">miRNA Target Show</h4>
+        </div>
+        <div class="modal-body" id="pairResult"></div>
+      </div>
+    </div>
+  </div>
+  <script src="__PUBLIC__/js/echarts/echarts.js"></script> 
+  <script type="text/javascript">
+	  $("#mir-seq").html($("#mir-seq").text().replace("I", "<span style='color:red;font-weight:bold;'>I</span>"));
+		var myChart = echarts.init(document.getElementById('tchange')); 	
+		var option = {
+    					tooltip : {
+        					trigger: 'item',
+					        formatter: "{b}: {c}"
+					    },
+					    toolbox: {
+					        show : true,
+					        feature : {
+							            mark : {show: false},
+							            dataView : {show: false, readOnly: false},
+							            restore : {show: false},
+							            saveAsImage : {show: true}
+        								}
+    					},
+					    calculable : false,
+					    series : [
+        							{
+							            name:'Venn',
+							            type:'venn',
+							            itemStyle: {
+							                normal: {
+									                    label: {
+											                        show: true,
+											                        textStyle: {
+														                            fontFamily: 'Arial, Verdana, sans-serif',
+														                            fontSize: 16,
+														                            fontStyle: 'italic',
+														                            fontWeight: 'bolder'
+														                        }
+											                    },
+									                    labelLine: {
+											                        show: false,
+											                        length: 10,
+											                        lineStyle: {
+														                            width: 1,
+														                            type: 'solid'
+														                        }
+                    												}
+												                },
+                										emphasis: {
+												                    color: '#cc99cc',
+												                    borderWidth: 3,
+												                    borderColor: '#996699'
+												                }
+    					        },
+            					data:[
+						                {value:{$hit.new_t}, name:'Edited'},
+						                {value:{$hit.old_t}, name:'WT'},
+						                {value:{$hit.com_t}, name:'Common'}
+            						]
+        						}
+    						]
+					};
+					myChart.setOption(option); 
+$('#target-show').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget) // Button that triggered the modal
+	var rec = button.data('rec') // Extract info from data-* attributes
+    var modal = $(this)
+	$.get("__CONTROLLER__/pair/rec/"+rec, function(result){
+		modal.find('.modal-body').html(result)
+	});
+});
+$('#target-search').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget) // Button that triggered the modal
+	var rec = button.data('rec') // Extract info from data-* attributes
+    var modal = $(this)
+	$.get("__CONTROLLER__/search/symbol/"+$("#gs").val()+"/type/"+$("#event").val()+"/sig/{$hit.sig}", function(result){
+		modal.find('.modal-body').html(result)
+	});
+})
+</script> 
+</block>
+<block name="sidebar">
+  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+    <ul class="nav bs-docs-sidenav">
+      <li> <a href="#overview">Overview</a>
+        <ul class="nav">
+          <li><a href="#ov-mir">miRNA Information</a></li>
+          <li><a href="#ov-edit">Editing Information</a></li>
+        </ul>
+      </li>
+      <li> <a href="#search">Search</a></li>
+      <li> <a href="#targets">miRNA Targets</a>
+        <ul class="nav">
+          <li><a href="#targets-venn">Venn</a></li>
+          <li><a href="#targets-com">Old targets</a></li>
+          <li><a href="#targets-new">New targets</a></li>
+          <li><a href="#targets-del">Inactive targets</a></li>
+        </ul>
+      </li>
+      <li> <a href="#top" class="back-to-top">Back to top</a></li>
+    </ul>
+  </nav>
+</block>
+</extend>
