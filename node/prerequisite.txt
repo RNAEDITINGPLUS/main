@@ -1,0 +1,8 @@
+biopython
+numpy
+scipy
+Cython
+MySQL-python
+pandas
+pysam
+dendropy
