@@ -48,11 +48,11 @@ return  array(
 
     /* 数据库设置 */
     'DB_TYPE'               =>  'mysql',     // Database type
-    'DB_HOST'               =>  '', // Database host
-    'DB_NAME'               =>  '',          // Database name
-    'DB_USER'               =>  '',      // User name
-    'DB_PWD'                =>  '',          // Password
-    'DB_PORT'               =>  '',        // Port
+    'DB_HOST'               =>  '{DBH}', // Database host
+    'DB_NAME'               =>  '{DBN}',          // Database name
+    'DB_USER'               =>  '{DBU}',      // User name
+    'DB_PWD'                =>  '{DBPW}',          // Password
+    'DB_PORT'               =>  '{DBPT}',        // Port
     'DB_PREFIX'             =>  '',    // Prefix
     'DB_PARAMS'          	=>  array(),    
     'DB_DEBUG'  			=>  TRUE,
